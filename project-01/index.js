@@ -37,7 +37,7 @@ const colors = [
   'darksalmon',
   'darkseagreen',
   'darkslateblue',
-  'darkeslategrey',
+  'darkelategrey',
   'darkturquoise',
   'darkviolet',
   'deeppink',
@@ -142,6 +142,7 @@ const colors = [
   'yellow',
   'yellowgreen'
 ]
+
 
 // Color changer button
 const btn = document.getElementById('btn');
