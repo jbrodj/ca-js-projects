@@ -45,16 +45,65 @@ const author = document.getElementById('author');
 const job = document.getElementById('job');
 const info = document.getElementById('info');
 
-const prevBtn = document.querySelector('prev-btn');
-const nextBtn = document.querySelector('next-btn');
-const randomBtn = document.querySelector('random-btn');
+const prevBtn = document.querySelector('.prev-btn');
+const nextBtn = document.querySelector('.next-btn');
+const randomBtn = document.querySelector('.random-btn');
 
 
-// Set the item to load by default.
+// Set which review item to load by default.
 let currentItem = 0;
 
 // Load initial item
   // Listen to the window for when the content loads. 
 window.addEventListener('DOMContentLoaded', function() {
-  console.log('yiiiiaaa');
+  // On page load, call the showPerson function passing the hard-coded default (currentItem) to load the default review.
+  showPerson(currentItem)
+});
+
+// Show person based on which item is selected
+function showPerson(person) {
+  // Initialize variable to store the current review.
+  const item = reviews[person];
+  // Assign value to the image source property to grab image from the current review.
+  img.src = reviews[person].img;
+  // Same for name, job, and review text.
+  author.textContent = item.name;
+  job.textContent = item.job;
+  info.textContent = item.text;
+}
+
+// Show next person's review
+nextBtn.addEventListener('click', function() {
+
+  currentItem++;
+  
+  // Prevent iterating past the number of items in the list.
+  if(currentItem > reviews.length - 1) {
+    currentItem = 0
+  }
+
+  // Call the show person to render the current item.
+  showPerson(currentItem);
+});
+
+
+// Show previous person's review
+prevBtn.addEventListener('click', function() {
+  currentItem--;
+
+  if(currentItem < 0) {
+    currentItem = reviews.length - 1;
+  }
+
+  showPerson(currentItem);
+});
+
+
+// Random button
+randomBtn.addEventListener('click', function() {
+  
+  // Generate a random index
+  currentItem = Math.floor(Math.random() * reviews.length);
+
+  showPerson(currentItem);
 })
