@@ -1,3 +1,4 @@
+//* */ Menu items array
 const menu = [
   {
     id: 1,
@@ -72,3 +73,65 @@ const menu = [
     desc: `skateboard fam synth authentic semiotics. Live-edge lyft af, edison bulb yuccie crucifix microdosing.`,
   },
 ];
+
+// The parent element of all the single menu items is the .section-center div. So let's access that. 
+const sectionCenter = document.querySelector('.section-center');
+
+//* Grab the filter buttons
+const filterBtns = document.querySelectorAll('.filter-btn');
+
+// When the page loads, we want to display all the content.
+  // Listen for the page load.
+window.addEventListener('DOMContentLoaded', function() {
+  // Call the function to create the innerHTML, and pass it the menu array. 
+  displayMenuItems(menu)
+});
+
+//* Listen for a filter button click
+filterBtns.forEach(function(btn) {
+  btn.addEventListener('click', function(e) {
+    // * Here's something new!!!
+    // The dataset property lets us access the value of an html data attribute (we're calling ours "data-id")
+    // In this case the "id" part of the string becomes a property on the dataset. 
+    // Set the current category using the event and data-id of the button that was clicked.
+    const category = e.currentTarget.dataset.id
+
+    // Let's create a new filtered the array using our data-id value.
+    const menuCategory = menu.filter(function(menuItem) {
+      // Check the category of each menuItem
+      if (menuItem.category === category) {
+        return menuItem;
+      } 
+    });
+    // Whenever a button is pressed, call the displayMenuItems function to render the menu. If 'all' is selected, pass the whole menu array, if a category button is selected, we're passing the filtered array. 
+    if (category === 'all') {
+      displayMenuItems(menu)
+    } else {
+      displayMenuItems(menuCategory)
+    }
+  })
+});
+
+// Function to generate the html string for all of our single menu items joined together.
+function displayMenuItems(menuItems) {
+    // map the array, returning a new array containing the html for each item.
+    let displayMenu = menuItems.map(function(item) {
+      return `
+        <article class="menu-item">
+          <img src=${item.img} class="photo" alt=${item.title}>
+          <div class="item-info">
+            <header>
+              <h4>${item.title}</h4>
+              <h4 class="price">${item.price}</h4>
+            </header>
+            <p class="item-text">${item.desc}</p>
+          </div>
+        </article>
+      `;
+  });
+    // Use the join method to add each item onto a string (and use the empty string in the parentheses to eliminate that , character that separates the array values)
+  displayMenu = displayMenu.join('')
+  // console.log(displayMenu);
+  // Set the section html to that joined string.
+  sectionCenter.innerHTML = displayMenu
+}
