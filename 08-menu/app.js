@@ -72,44 +72,35 @@ const menu = [
     img: "./images/item-9.jpeg",
     desc: `skateboard fam synth authentic semiotics. Live-edge lyft af, edison bulb yuccie crucifix microdosing.`,
   },
+  {
+    id: 10,
+    title: "steak dinner",
+    category: "dinner",
+    price: 36.99,
+    img: "./images/item-10.jpeg",
+    desc: `skateboard fam synth authentic semiotics. Live-edge lyft af, edison bulb yuccie crucifix microdosing.`,
+  },
 ];
+
+//Note*** Instead of hardcoding category buttons in the html, we should create them dynamically because the database/api might change, and new categories might be added/changed. If our button ids were hardcoded, the functionality would break anytime the categories change in the database. 
+  // So we want to:
+    // Get the categories from the data (and only get the UNIQUE ones)
+    // iterate over the list of categories and return buttons for each of them.
+    // Access buttons *when* they are available. The button elements don't exist until the data is available - so might not exist on page load.
 
 // The parent element of all the single menu items is the .section-center div. So let's access that. 
 const sectionCenter = document.querySelector('.section-center');
 
-//* Grab the filter buttons
-const filterBtns = document.querySelectorAll('.filter-btn');
+// Grab the filter button container
+const btnContainer = document.querySelector('.btn-container');
 
 // When the page loads, we want to display all the content.
   // Listen for the page load.
 window.addEventListener('DOMContentLoaded', function() {
   // Call the function to create the innerHTML, and pass it the menu array. 
-  displayMenuItems(menu)
-});
-
-//* Listen for a filter button click
-filterBtns.forEach(function(btn) {
-  btn.addEventListener('click', function(e) {
-    // * Here's something new!!!
-    // The dataset property lets us access the value of an html data attribute (we're calling ours "data-id")
-    // In this case the "id" part of the string becomes a property on the dataset. 
-    // Set the current category using the event and data-id of the button that was clicked.
-    const category = e.currentTarget.dataset.id
-
-    // Let's create a new filtered the array using our data-id value.
-    const menuCategory = menu.filter(function(menuItem) {
-      // Check the category of each menuItem
-      if (menuItem.category === category) {
-        return menuItem;
-      } 
-    });
-    // Whenever a button is pressed, call the displayMenuItems function to render the menu. If 'all' is selected, pass the whole menu array, if a category button is selected, we're passing the filtered array. 
-    if (category === 'all') {
-      displayMenuItems(menu)
-    } else {
-      displayMenuItems(menuCategory)
-    }
-  })
+  displayMenuItems(menu);
+  // Call the function to dynamically generate the category buttons and their functionality. 
+  displayCategoryButtons();
 });
 
 // Function to generate the html string for all of our single menu items joined together.
@@ -134,4 +125,58 @@ function displayMenuItems(menuItems) {
   // console.log(displayMenu);
   // Set the section html to that joined string.
   sectionCenter.innerHTML = displayMenu
+}
+
+// Function to display the category buttons and provide functionality.
+function displayCategoryButtons() {
+  // Purpose: Generate our list of categories from the data.
+    // Reduce method + checking each item to see if it's already in the new array. If not, push it to our new array.
+    // Second argument is an array with a string of 'all' because we still need to include 'all' as a button.
+  
+  // New array storing the unique categories in our data.
+  const categories = menu.reduce(function(values, item) {
+    if (!values.includes(item.category)) {
+      values.push(item.category)
+    }
+    return values;
+  }, ['all'])
+  console.log(categories);
+  // Now we have an array of all the unique categories in the data.
+
+  // Print the buttons to the page
+  const categoryBtns = categories.map(function(category) {
+    return `<button class="filter-btn" type="button" data-id=${category}>${category}</button>`
+  }).join('')
+  // console.log(categoryBtns);
+
+  // Append the string to the btnContainer element.
+  btnContainer.innerHTML = categoryBtns;
+  
+  //* Grab the filter buttons
+const filterBtns = document.querySelectorAll('.filter-btn');
+
+//* Listen for a filter button click
+filterBtns.forEach(function(btn) {
+  btn.addEventListener('click', function(e) {
+    // * Here's something new!!!
+    // The dataset property lets us access the value of an html data attribute (we're calling ours "data-id")
+    // In this case the "id" part of the string becomes a property on the dataset. 
+    // Set the current category using the event and data-id of the button that was clicked.
+    const category = e.currentTarget.dataset.id
+
+    // Let's create a new filtered the array using our data-id value.
+    const menuCategory = menu.filter(function(menuItem) {
+      // Check the category of each menuItem
+      if (menuItem.category === category) {
+        return menuItem;
+      } 
+      });
+      // Whenever a button is pressed, call the displayMenuItems function to render the menu. If 'all' is selected, pass the whole menu array, if a category button is selected, we're passing the filtered array. 
+      if (category === 'all') {
+        displayMenuItems(menu)
+      } else {
+        displayMenuItems(menuCategory)
+      }
+    })
+  });
 }
